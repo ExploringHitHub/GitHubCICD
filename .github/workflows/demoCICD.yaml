@@ -43,7 +43,9 @@ jobs:
 
             # Run PMD scan
                 -   name: 'Run PMD scan'
-                    run: ~/pmd/bin/run.sh pmd -d force-app -R pmd/ruleset.xml -f text
+                    run: |
+                        mkdir -p pmd_report
+                         ~/pmd/bin/run.sh pmd -d force-app -R pmd/ruleset.xml -f text > pmd_report/pmd_report.txt
 
             # Install the sfdx-git-delta plugin     
                 -   name: Install the sfdx-git-delta plugin
