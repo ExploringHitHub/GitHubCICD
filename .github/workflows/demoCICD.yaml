@@ -96,3 +96,9 @@ jobs:
                     with:
                         name: delta
                         path: delta/
+
+                -   name: Upload PMD folder
+                    uses: actions/upload-artifact@v4
+                    with:
+                        name: PMD Report
+                        path: pmd_report/
