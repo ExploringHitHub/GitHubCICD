@@ -1,0 +1,5 @@
+# Github Actions
+.github/
+.github/workflow
+**/.gitignore
+**/logs/
