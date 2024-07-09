@@ -15,7 +15,7 @@ jobs:
                 -   name: Checkout source code
                     uses: actions/checkout@v4
                     with: 
-                        fetch-depth: 10  # Fetch the last 10 commits
+                        fetch-depth: 0  # Fetch the last 10 commits
                         # fetch-depth: 0  # Fetch the entire history for accurate delta calculation
                         
                         # This sets the fetch depth to 10, ensuring that the workflow fetches at least the last two commits.
