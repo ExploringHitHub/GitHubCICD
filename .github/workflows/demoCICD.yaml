@@ -55,7 +55,7 @@ jobs:
                     run: |
                         mkdir -p delta
                         echo "Generating delta package.xml"
-                        sfdx sgd:source:delta --to "HEAD" --from "HEAD~9" --output "./delta" --ignore-whitespace -d -i .sgdignore
+                        sfdx sgd:source:delta --to "HEAD" --from "HEAD~2" --output "./delta" --ignore-whitespace -d -i .sgdignore
                         ls -l delta/package  
                         if [ -f delta/package/package.xml ]; then
                             echo "--- package.xml generated with added and modified metadata ---"
