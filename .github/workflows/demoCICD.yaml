@@ -75,7 +75,7 @@ jobs:
                 -   name: Validate & Deploy Delta components to Salesforce
                     run: |
                         if [ -f delta/package/package.xml ]; then
-                            sfdx force:source:deploy -x delta/package/package.xml --checkonly > deploy_reports/checkonly_report.txt
+                            sfdx force:source:deploy -x delta/package/package.xml --checkonly -u target_poc > deploy_reports/checkonly_report.txt
                             sfdx force:source:deploy -x delta/package/package.xml > deploy_reports/deployment_report.txt
                             sfdx force:mdapi:deploy -d delta/destructiveChanges -w 10 --ignorewarnings > deploy_reports/deployment_report.txt
                         fi 
