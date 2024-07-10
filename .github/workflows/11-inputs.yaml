@@ -12,12 +12,12 @@ on:
                 description: Which environment the workflow will target
             tag:
                 type: choice
-                description: Release from which to build and deploy
                 options:
                     - v2
                     - v1
                     - v3
                 default: v3
+                description: Release from which to build and deploy
 
 jobs:
     build:
