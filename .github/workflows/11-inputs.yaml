@@ -25,7 +25,7 @@ jobs:
         steps:
             -   name: Build
                 run: |
-                 echo "Building from tag ${{inputs.tag}}"
+                  echo "Building from tag ${{inputs.tag}}"
     deploy:
         runs-on: ubuntu-latest
         if: ${{!inputs.dry-run}}
@@ -33,6 +33,6 @@ jobs:
         steps:
             -   name: Deploy
                 run: |
-                 echo "Deploying to ${{inputs.target}}"
+                  echo "Deploying to ${{inputs.target}}"
         
         
