@@ -4,7 +4,8 @@ on:
     push:
         branches: 
             - develop
-
+env:
+    Push_Body:${{github.event.push_request.Push_Body}}
 jobs:
     deploy:
         runs-on: ubuntu-latest
@@ -51,6 +52,12 @@ jobs:
                 -   name: Install the sfdx-git-delta plugin
                     run: |
                         echo 'y' | sfdx plugins:install sfdx-git-delta
+
+            # Read the Test Classes
+                -   name: Read the Test Classes
+                    run: |
+                        echo $Push_Body > .push_body.txt
+                        cat push_body.txt
 
             # Generate the package.xml for delta files     
                 -   name: Generate the package.xml for delta files
