@@ -21,18 +21,18 @@ on:
 
 jobs:
     build:
-        run-on: ubuntu-latest
+        runs-on: ubuntu-latest
         steps:
             -   name: Build
                 run: |
-                echo "Building from tag ${{inputs.tag}}"
+                 echo "Building from tag ${{inputs.tag}}"
     deploy:
-        run-on: ubuntu-latest
+        runs-on: ubuntu-latest
         if: ${{!inputs.dry-run}}
         environment: ${{inputs.target}}
         steps:
             -   name: Deploy
                 run: |
-                echo "Deploying to ${{inputs.target}}"
+                 echo "Deploying to ${{inputs.target}}"
         
         
