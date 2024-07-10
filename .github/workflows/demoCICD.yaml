@@ -4,8 +4,6 @@ on:
     push:
         branches: 
             - develop
-env:
-    Push_Body:${{github.event.push_request.Push_Body}}
 jobs:
     deploy:
         runs-on: ubuntu-latest
@@ -30,7 +28,7 @@ jobs:
             # Authenticate with Salesforce
                 -   name: Authenticate with Salesforce
                     run: |
-                        echo ${{ secrets.SFDX_AUTH_URL }} > ./authfile.txt
+                        echo ${{secrets.SFDX_AUTH_URL}} > ./authfile.txt
                         sfdx force:auth:sfdxurl:store -f ./authfile.txt --setalias target_poc -s
 
             # Install PMD
