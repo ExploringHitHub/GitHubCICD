@@ -52,12 +52,6 @@ jobs:
                     run: |
                         echo 'y' | sfdx plugins:install sfdx-git-delta
 
-            # Read the Test Classes
-                -   name: Read the Test Classes
-                    run: |
-                        echo $Push_Body > .push_body.txt
-                        cat push_body.txt
-
             # Generate the package.xml for delta files     
                 -   name: Generate the package.xml for delta files
                     run: |
