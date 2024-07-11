@@ -33,6 +33,6 @@ jobs:
         steps:
             -   name: Deploy
                 run: |
-                  echo "Deploying to ${{inputs.target}}"
+                  echo "Deploying to: ${{inputs.target}}"
         
         
