@@ -13,8 +13,7 @@ jobs:
         runs-on: ubuntu-latest
         outputs: 
             build-status: ${{steps.build.outputs.status}}
-            #output1 : ${{steps.build.outputs.status}}
-            #output2 : value2
+            
         steps:
             - name: Print GITHUB_OUTPUT path
               run: echo "$GITHUB_OUTPUT"
