@@ -1,8 +1,8 @@
 name: Salesforce Deployments
 
 on:
-    #push:
-    workflow_dispatch:
+    push:
+    #workflow_dispatch:
 jobs:
     deploy:
         runs-on: ubuntu-latest
