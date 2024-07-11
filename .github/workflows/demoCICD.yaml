@@ -1,7 +1,8 @@
 name: Salesforce Deployments
 
 on:
-    push:
+    #push:
+    workflow_dispatch:
         branches: 
             - develop
 jobs:
