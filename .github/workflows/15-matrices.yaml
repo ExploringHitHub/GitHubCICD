@@ -14,7 +14,7 @@ jobs:
         steps:
             - name: Setup node
               uses: actions/setup-node@v3
-              with: ${{matrixnode-version}}"
+              with: ${{matrix.node-version}}"
 
             - name: Perform some tests
               run: |
