@@ -3,7 +3,7 @@ on:
     workflow_dispatch
 jobs:
     backwards-compatibility:
-        runs-on: ubuntu_latest
+        runs-on: ${{matrix.os}}
         strategy:
             matrix:
                 node-version: [18.x, 20.x,21.x]
@@ -11,10 +11,11 @@ jobs:
                 - ubuntu-latest
                 - windows-latest
         steps:
-            - name:  Setup node
-              run: |
-               echo "${{matrix.os.node-version}}"
-            - name:  Perform some tests
+            - name: Setup node
+              uses: actions/setup-node@v3
+              with: ${{matrixnode-version}}"
+
+            - name: Perform some tests
               run: |
                echo "Running tests on OS ${{matrix.os}} and NodeJS ${{matrix.node-version}}"
 
