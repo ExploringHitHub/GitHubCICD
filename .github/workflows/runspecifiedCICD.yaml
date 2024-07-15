@@ -69,19 +69,17 @@
                     -   name: Create deployment reports folder
                         run: mkdir -p deploy_reports
 
-                # populate the variable to have all test class to be used for run specified test.continue-on-error: 
-                    -   name:  Run Specified Test Classes
-                        shell: bash
+                # read the test class to be used for run specified test.continue-on-error: 
+                    -   name:  List Down all the Test Files to be used for Run Specified Test
                         run: |
-                            export TESTS = `./runSpecified/runspecifiedtest.txt` 
-                            echo "$TESTS"     
+                            echo ls-l ./runSpecified/runspecifiedtest.csv
 
                 # Validate & Deploy Delta components to Salesforce    
                     -   name: Validate & Deploy Delta components to Salesforce
                         run: |
                             echo " the specified run test file contains :$TESTS"
                             if [ -f delta/package/package.xml ]; then
-                                sfdx force:source:deploy -x delta/package/package.xml --checkonly -u target_poc --testlevel RunSpecified --runtests $TESTS> deploy_reports/checkonly_report.txt
+                                sfdx force:source:deploy -x delta/package/package.xml --checkonly -u target_poc --testlevel RunSpecifiedTests --runtests ""> deploy_reports/checkonly_report.txt
                                 sfdx force:source:deploy -x delta/package/package.xml > deploy_reports/deployment_report.txt
                                 sfdx force:mdapi:deploy -d delta/destructiveChanges -w 10 --ignorewarnings > deploy_reports/deployment_report.txt
                             fi 
