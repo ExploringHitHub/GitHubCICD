@@ -1,4 +1,4 @@
-name: Salesforce Deployments
+name: Salesforce Deployments: Runspecified
 
 on:
     #push:
