@@ -1,5 +1,5 @@
 name: 16 - Working with Environments
-run-name: 16 - Wking with Env | env - ${{inputs.target-env.type}}
+run-name: 16 - Wking with Env | env - ${{github.env}}
 on:
     workflow_dispatch:
         inputs:
