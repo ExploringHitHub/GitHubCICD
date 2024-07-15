@@ -72,7 +72,7 @@
                 # read the test class to be used for run specified test.continue-on-error: 
                     -   name:  List Down all the Test Files to be used for Run Specified Test
                         run: |
-                            echo ls-l ./runSpecified/runspecifiedtest.csv
+                            echo ls-l `cat ./runSpecified/runspecifiedtest.csv`
 
                 # Validate & Deploy Delta components to Salesforce    
                     -   name: Validate & Deploy Delta components to Salesforce
