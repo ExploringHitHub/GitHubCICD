@@ -1,103 +1,103 @@
-name: Salesforce Deployments-Runspecified
+    name: Salesforce Deployments-Runspecified
 
-on:
-    #push:
-     workflow_dispatch:
-jobs:
-    deploy:
-        runs-on: ubuntu-latest
+    on:
+        #push:
+        workflow_dispatch:
+    jobs:
+        deploy:
+            runs-on: ubuntu-latest
 
-        steps:
-      
-            # Checkout source code
-                -   name: Checkout source code
-                    uses: actions/checkout@v4
-                    with: 
-                        fetch-depth: 0  # Fetch the last 10 commits
-                        # fetch-depth: 0  # Fetch the entire history for accurate delta calculation
-                        
-                        # This sets the fetch depth to 10, ensuring that the workflow fetches at least the last two commits.
-                        # This allows git diff HEAD~1 to work correctly by ensuring HEAD~1 is available.
-      
-            # Install salesforce cli
-                -   name: Install salesforce cli
-                    run: |
-                        npm install sfdx-cli --global
+            steps:
+        
+                # Checkout source code
+                    -   name: Checkout source code
+                        uses: actions/checkout@v4
+                        with: 
+                            fetch-depth: 0  # Fetch the last 10 commits
+                            # fetch-depth: 0  # Fetch the entire history for accurate delta calculation
+                            
+                            # This sets the fetch depth to 10, ensuring that the workflow fetches at least the last two commits.
+                            # This allows git diff HEAD~1 to work correctly by ensuring HEAD~1 is available.
+        
+                # Install salesforce cli
+                    -   name: Install salesforce cli
+                        run: |
+                            npm install sfdx-cli --global
 
-            # Authenticate with Salesforce
-                -   name: Authenticate with Salesforce
-                    run: |
-                        echo ${{secrets.SFDX_AUTH_URL}} > ./authfile.txt
-                        sfdx force:auth:sfdxurl:store -f ./authfile.txt --setalias target_poc -s
+                # Authenticate with Salesforce
+                    -   name: Authenticate with Salesforce
+                        run: |
+                            echo ${{secrets.SFDX_AUTH_URL}} > ./authfile.txt
+                            sfdx force:auth:sfdxurl:store -f ./authfile.txt --setalias target_poc -s
 
-            # Install PMD
-                -   name: Install PMD
-                    run: |
-                        PMD_VERSION=`cat pmd/pmd-version.txt`
-                        wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F$PMD_VERSION/pmd-bin-$PMD_VERSION.zip
-                        unzip pmd-bin-$PMD_VERSION.zip -d ~
-                        mv ~/pmd-bin-$PMD_VERSION ~/pmd
-                        ~/pmd/bin/run.sh pmd --version
+                # Install PMD
+                    -   name: Install PMD
+                        run: |
+                            PMD_VERSION=`cat pmd/pmd-version.txt`
+                            wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F$PMD_VERSION/pmd-bin-$PMD_VERSION.zip
+                            unzip pmd-bin-$PMD_VERSION.zip -d ~
+                            mv ~/pmd-bin-$PMD_VERSION ~/pmd
+                            ~/pmd/bin/run.sh pmd --version
 
-            # Run PMD scan
-                -   name: 'Run PMD scan'
-                    run: |
-                        mkdir -p pmd_report
-                         ~/pmd/bin/run.sh pmd -d force-app -R pmd/ruleset.xml -f text > pmd_report/pmd_report.txt
+                # Run PMD scan
+                    -   name: 'Run PMD scan'
+                        run: |
+                            mkdir -p pmd_report
+                            ~/pmd/bin/run.sh pmd -d force-app -R pmd/ruleset.xml -f text > pmd_report/pmd_report.txt
 
-            # Install the sfdx-git-delta plugin     
-                -   name: Install the sfdx-git-delta plugin
-                    run: |
-                        echo 'y' | sfdx plugins:install sfdx-git-delta
+                # Install the sfdx-git-delta plugin     
+                    -   name: Install the sfdx-git-delta plugin
+                        run: |
+                            echo 'y' | sfdx plugins:install sfdx-git-delta
 
-            # Generate the package.xml for delta files     
-                -   name: Generate the package.xml for delta files
-                    run: |
-                        mkdir -p delta
-                        echo "Generating delta package.xml"
-                        sfdx sgd:source:delta --to "HEAD" --from "HEAD~2" --output "./delta" --ignore-whitespace -d -i .sgdignore
-                        ls -l delta/package  
-                        if [ -f delta/package/package.xml ]; then
-                            echo "--- package.xml generated with added and modified metadata ---"
-                            cat delta/package/package.xml
-                        else
-                            echo "No changes detected or package.xml not created"
-                        fi
-            # ls -l delta/package - List contents of delta/package directory for debugging
+                # Generate the package.xml for delta files     
+                    -   name: Generate the package.xml for delta files
+                        run: |
+                            mkdir -p delta
+                            echo "Generating delta package.xml"
+                            sfdx sgd:source:delta --to "HEAD" --from "HEAD~2" --output "./delta" --ignore-whitespace -d -i .sgdignore
+                            ls -l delta/package  
+                            if [ -f delta/package/package.xml ]; then
+                                echo "--- package.xml generated with added and modified metadata ---"
+                                cat delta/package/package.xml
+                            else
+                                echo "No changes detected or package.xml not created"
+                            fi
+                # ls -l delta/package - List contents of delta/package directory for debugging
 
-            # Create deployment reports folder
-                -   name: Create deployment reports folder
-                    run: mkdir -p deploy_reports
+                # Create deployment reports folder
+                    -   name: Create deployment reports folder
+                        run: mkdir -p deploy_reports
 
-            # Validate & Deploy Delta components to Salesforce    
-                -   name: Validate & Deploy Delta components to Salesforce
-                    run: |
-                        export TESTS =`cat pmd/pmd-version.txt`
-                        if [ -f delta/package/package.xml ]; then
-                            sfdx force:source:deploy -x delta/package/package.xml --checkonly -u target_poc --testlevel RunSpecified --runtests $TESTS> deploy_reports/checkonly_report.txt
-                            sfdx force:source:deploy -x delta/package/package.xml > deploy_reports/deployment_report.txt
-                            sfdx force:mdapi:deploy -d delta/destructiveChanges -w 10 --ignorewarnings > deploy_reports/deployment_report.txt
-                        fi 
-                    continue-on-error: true
+                # Validate & Deploy Delta components to Salesforce    
+                    -   name: Validate & Deploy Delta components to Salesforce
+                        run: |
+                            TESTS =`cat pmd/pmd-version.txt`
+                            if [ -f delta/package/package.xml ]; then
+                                sfdx force:source:deploy -x delta/package/package.xml --checkonly -u target_poc --testlevel RunSpecified --runtests $TESTS> deploy_reports/checkonly_report.txt
+                                sfdx force:source:deploy -x delta/package/package.xml > deploy_reports/deployment_report.txt
+                                sfdx force:mdapi:deploy -d delta/destructiveChanges -w 10 --ignorewarnings > deploy_reports/deployment_report.txt
+                            fi 
+                        continue-on-error: true
 
-            #Artifact of delta and deployment report  
-                -   name: List deploy_reports directory
-                    run: ls -R deploy_reports
+                #Artifact of delta and deployment report  
+                    -   name: List deploy_reports directory
+                        run: ls -R deploy_reports
 
-                -   name: Upload deployment report
-                    uses: actions/upload-artifact@v4
-                    with:
-                        name: deployment-report
-                        path: deploy_reports/    
+                    -   name: Upload deployment report
+                        uses: actions/upload-artifact@v4
+                        with:
+                            name: deployment-report
+                            path: deploy_reports/    
 
-                -   name: Upload delta folder
-                    uses: actions/upload-artifact@v4
-                    with:
-                        name: delta
-                        path: delta/
+                    -   name: Upload delta folder
+                        uses: actions/upload-artifact@v4
+                        with:
+                            name: delta
+                            path: delta/
 
-                -   name: Upload PMD folder
-                    uses: actions/upload-artifact@v4
-                    with:
-                        name: PMD Report
-                        path: pmd_report/
+                    -   name: Upload PMD folder
+                        uses: actions/upload-artifact@v4
+                        with:
+                            name: PMD Report
+                            path: pmd_report/
