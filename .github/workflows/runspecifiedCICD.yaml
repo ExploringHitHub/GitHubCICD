@@ -73,7 +73,7 @@
                     -   name: Validate & Deploy Delta components to Salesforce
                         run: |
                             export $TESTS =`cat runSpecified/runspecifiedtest.txt`
-                            echo " the specified run test file contains : ${{TESTS}}"
+                            echo " the specified run test file contains :$TESTS"
                             if [ -f delta/package/package.xml ]; then
                                 sfdx force:source:deploy -x delta/package/package.xml --checkonly -u target_poc --testlevel RunSpecified --runtests $TESTS> deploy_reports/checkonly_report.txt
                                 sfdx force:source:deploy -x delta/package/package.xml > deploy_reports/deployment_report.txt
