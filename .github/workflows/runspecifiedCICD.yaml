@@ -73,7 +73,7 @@
                     -   name:  Run Specified Test Classes
                         shell: bash
                         run: |
-                            export TESTS = `cat ./runSpecified/runspecifiedtest.txt` 
+                            export TESTS = `./runSpecified/runspecifiedtest.txt` 
                             echo "$TESTS"     
 
                 # Validate & Deploy Delta components to Salesforce    
