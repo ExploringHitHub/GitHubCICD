@@ -6,7 +6,7 @@
     jobs:
         deploy:
             runs-on: ubuntu-latest
-            
+          
             steps:
         
                 # Checkout source code
@@ -74,12 +74,13 @@
                         run: |
                             echo ls-l `cat ./runSpecified/runspecifiedtest.csv`
 
+
                 # Validate & Deploy Delta components to Salesforce    
                     -   name: Validate & Deploy Delta components to Salesforce
                         run: |
-                            echo " the specified run test file contains :$TESTS"
+                            echo " the specified run test file contains :`cat ./runSpecified/runspecifiedtest.csv`"
                             if [ -f delta/package/package.xml ]; then
-                                sfdx force:source:deploy -x delta/package/package.xml --checkonly -u target_poc --testlevel RunSpecifiedTests --runtests ""> deploy_reports/checkonly_report.txt
+                                sfdx force:source:deploy -x delta/package/package.xml --checkonly -u target_poc --testlevel RunSpecifiedTests --runtests `cat ./runSpecified/runspecifiedtest.csv`> deploy_reports/checkonly_report.txt
                                 sfdx force:source:deploy -x delta/package/package.xml > deploy_reports/deployment_report.txt
                                 sfdx force:mdapi:deploy -d delta/destructiveChanges -w 10 --ignorewarnings > deploy_reports/deployment_report.txt
                             fi 
