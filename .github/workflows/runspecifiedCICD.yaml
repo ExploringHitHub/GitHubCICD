@@ -1,12 +1,15 @@
     name: Salesforce Deployments-Runspecified
-
+    
     on:
         #push:
+            #paths:
+            #    - "force-app/**"
+            #branches:
+            #    - develop    
         workflow_dispatch:
     jobs:
         deploy:
             runs-on: ubuntu-latest
-          
             steps:
         
                 # Checkout source code
@@ -18,7 +21,12 @@
                             
                             # This sets the fetch depth to 10, ensuring that the workflow fetches at least the last two commits.
                             # This allows git diff HEAD~1 to work correctly by ensuring HEAD~1 is available.
-        
+                # login to Docker Hub
+                    -   name: Login to Docker Hub
+                        uses: docker/login-action@v1
+                        with:
+                            username: ${{ secrets.DOCKER_HUB_USERNAME}}  
+                            password:  ${{secrets.DOCKER_HUB_ACCESSTOKEN}}                 
                 # Install salesforce cli
                     -   name: Install salesforce cli
                         run: |
