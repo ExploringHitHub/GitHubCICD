@@ -4,7 +4,7 @@ Description: This action allow to cache both Node and NPM dependencies based on 
 inputs:
   node-version:
     description: NodeJS version to use
-    default: 20.x
+    default: 18.x
     required: false
   working-dir:
     description: The working directory of the application
