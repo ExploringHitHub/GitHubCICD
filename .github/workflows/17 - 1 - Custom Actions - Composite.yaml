@@ -13,6 +13,9 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ${{env.working-directory}}
         steps:
             - name: checkout the code
               uses: actions/checkout@v4
@@ -20,10 +23,10 @@ jobs:
               uses: ./.github/actions/composite-cache-deps
               with:
                 node-version: 20X
-                working-directory: 17-custom-actions/react-app          
+                working-directory: ${{env.working-directory}}          
             - name: Test
               run: npm run test
-              working-directory:  17-custom-actions/react-app 
+              working-directory: ${{env.working-directory}} 
             - name: Build
               run: npm run build   
      
