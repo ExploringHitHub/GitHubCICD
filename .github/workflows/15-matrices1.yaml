@@ -1,0 +1,20 @@
+name: 15-matrices1
+on:
+    workflow_dispatch
+
+jobs:
+    name: "${{matrix.color}} -- ${{matrix.shape}} -- ${{matrix.size}}
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+            color: [red,green]
+            shape: [circle,square]
+            size: [small,large]
+            include:
+                - opacity: 50
+                - color: red
+                  shape: triangle
+    steps:
+        - name: Dummy step
+          run: |
+           echo "${{matrix.color}} -- ${{matrix.shape}} -- ${{matrix.size}}"

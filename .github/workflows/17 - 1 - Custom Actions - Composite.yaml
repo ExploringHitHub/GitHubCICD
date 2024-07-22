@@ -1,0 +1,28 @@
+name: 17 - 1 - Custom Actions - Composite
+run-name: 17 - 1 - Custom Actions - Composite | env - ${{inputs.target-env}}
+env:
+    working-directory: 17-custom-actions/react-app
+on:
+    workflow_dispatch:
+        inputs:
+            target-env:
+                type: choice
+                options:
+                    - dev
+                    - prod
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: setup Node and NPM Dependencies
+              uses: ./.github/actions/composite-cache-deps
+              with:
+                node-version: 20X
+                working-directory: 17-custom-actions/react-app          
+            - name: Test
+              run: npm run test
+              working-directory:  17-custom-actions/react-app 
+            - name: Build
+              run: npm run build   
+     
+
