@@ -8,7 +8,7 @@ inputs:
     required: false
   working-dir:
     description: The working directory of the application
-    default: .
+    default: '.'
       required: false  
 runs:
   using: composite
