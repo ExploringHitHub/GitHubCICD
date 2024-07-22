@@ -5,7 +5,7 @@ inputs:
   node-version:
     description: NodeJS version to use
     default: 20.x
-    required: false
+      required: false
   working-dir:
     description: The working directory of the application
     default: '.'
