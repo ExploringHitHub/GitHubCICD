@@ -22,7 +22,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Dependency directories
-node_modules/
+!.github/actions/**/node_modules
 
 # Eslint cache
 .eslintcache
