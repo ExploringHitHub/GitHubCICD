@@ -23,6 +23,7 @@ jobs:
             # Authenticate with Salesforce
                 -   name: Authenticate with Salesforce
                     run: |
+                        echo "sfdx VERSION: $(sfdx --version)"
                         echo ${{secrets.SFDX_AUTH_URL}} > ./authfile.txt
                         sfdx force:auth:sfdxurl:store -f ./authfile.txt --setalias target_poc -s
 
