@@ -1,10 +1,9 @@
-FROM ubuntu:20.04
+# FROM: https://github.com/nodejs/docker-node/blob/master/14/buster-slim/Dockerfile
+FROM node:14.15-buster-slim
 
 ARG GIT_VERSION='v2.32.0'
 ARG PMD_VERSION='6.36.0'
-ARG SFDX_VERSION='@7.209.6'
-ARG SALESFORCE_CLI_VERSION=nightly
-ARG SF_CLI_VERSION=latest-rc
+ARG SFDX_VERSION='@7.109.0'
 
 ENV PMD_VERSION=$PMD_VERSION
 
@@ -39,25 +38,20 @@ RUN cd /root && \
     make prefix=/usr/local all && \
     make prefix=/usr/local install && \
     cd .. && \
+    echo "pwd ::-> $pwd "
     rm -r git* && \
-    git config --global user.name "Himanshu Saxena" && \
+    git config --global user.name "Not Configured" && \
     git config --global user.email "user@example.com" && \
-    echo "[INFO] installing nodejs for different other functionalities require for salesforce \
-          deployments, SFDX CLI , PMD , Git Delta plugin ..." && \
-    echo 'b298a73a9fc07badfa9e4a2e86ed48824fc9201327cdc43e3f3f58b273c535e7  ./nodejs.tar.gz' > node-file-lock.sha && \
-    curl -s -o nodejs.tar.gz https://nodejs.org/dist/v18.15.0/node-v18.15.0-linux-x64.tar.gz && \
-    shasum --check node-file-lock.sha && \
-    echo " [INFO] ## node-file-lock.sha ##" && \
-    cat node-file-lock.sha && \
-    mkdir /usr/local/lib/nodejs && \
-    tar xf nodejs.tar.gz -C /usr/local/lib/nodejs/ --strip-components 1 && \
-    rm nodejs.tar.gz node-file-lock.sha && \
-    PATH=/usr/local/lib/nodejs/bin:$PATH && \
+    echo "[INFO] installing openjdk for pmd ..." &&\
+    wget -qO - https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.24%2B8/OpenJDK11U-debugimage_aarch64_linux_hotspot_11.0.24_8.tar.gz && \
+    #wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
+    #add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
+    apt-get update && \
+    mkdir -p /usr/share/man/man1 && \
+    apt-get install -y --no-install-recommends adoptopenjdk-8-hotspot-jre && \
     echo "[INFO] installing sfdx-cli ..." &&\
-    npm install --global sfdx-cli${SFDX_VERSION} --ignore-scripts && \
-    #npm install --global @salesforce/cli${SFDX_VERSION} && \
-    apt-get update && apt-get install --assume-yes openjdk-11-jdk-headless jq && \
-    wget -q https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-bin-${PMD_VERSION}.zip -O pmd.zip && \
+    npm install sfdx-cli${SFDX_VERSION} --global && \
+    wget --no-check-certificate -q https://github.com/pmd/pmd/releases/download/pmd_releases%2F${PMD_VERSION}/pmd-bin-${PMD_VERSION}.zip -O pmd.zip && \
     mkdir /pmd && \
     unzip pmd.zip && \
     cd pmd-bin* && \
@@ -80,16 +74,21 @@ RUN cd /root && \
     echo "[INFO] installing sfpowerkit plugin - https://github.com/Accenture/sfpowerkit" &&\
     echo y | sfdx plugins:install sfpowerkit && \
     # ============ all done ==============
-    #echo "perl version: $(perl --version | head -2 )"  && \
+    echo "perl version: $(perl --version | head -2 )"  && \
     git --version && \
     echo "node version: $(node --version)" && \
     echo "npm version: $(npm --version)" && \
     sfdx --version && \
     sfdx plugins && \
-    #python --version && \
+    python --version && \
     java -version && \
     echo "PMD VERSION: $PMD_VERSION" && \
-    echo "BASH_VERSION: $BASH_VERSION"     
-    
+    echo "BASH_VERSION: $BASH_VERSION"
+
+RUN echo "[INFO] applying workaround for not being able to override /bin/sh as a default shell in gitlab - https://gitlab.com/gitlab-org/gitlab-runner/-/issues/1170" && \
+    echo "dash dash/sh boolean false" | debconf-set-selections && \
+    rm /bin/sh && \
+    ln -s /bin/bash /bin/sh && \
+    ls -l /bin/sh
 ENTRYPOINT [ "/bin/bash", "-c" ]
 CMD ["bash"]

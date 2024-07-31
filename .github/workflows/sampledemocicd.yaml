@@ -6,8 +6,8 @@ on:
 jobs:
     deploy:
         runs-on: ubuntu-latest
-        #container: 
-          #image: anshu004/sample-image      
+        container: 
+          image: anshu004/sample-image      
         steps:
       
             # Checkout source code
@@ -20,36 +20,17 @@ jobs:
                         # This sets the fetch depth to 10, ensuring that the workflow fetches at least the last two commits.
                         # This allows git diff HEAD~1 to work correctly by ensuring HEAD~1 is available.
       
-            # Install salesforce cli
-                -   name: Install salesforce cli
-                    run: |
-                        npm install sfdx-cli --global
-
             # Authenticate with Salesforce
                 -   name: Authenticate with Salesforce
                     run: |
                         echo ${{secrets.SFDX_AUTH_URL}} > ./authfile.txt
                         sfdx force:auth:sfdxurl:store -f ./authfile.txt --setalias target_poc -s
 
-            # Install PMD
-                -   name: Install PMD
-                    run: |
-                        PMD_VERSION=`cat pmd/pmd-version.txt`
-                        wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F$PMD_VERSION/pmd-bin-$PMD_VERSION.zip
-                        unzip pmd-bin-$PMD_VERSION.zip -d ~
-                        mv ~/pmd-bin-$PMD_VERSION ~/pmd
-                        ~/pmd/bin/run.sh pmd --version
-
             # Run PMD scan
                 -   name: 'Run PMD scan'
                     run: |
                         mkdir -p pmd_report
                          ~/pmd/bin/run.sh pmd -d force-app -R pmd/ruleset.xml -f text > pmd_report/pmd_report.txt
-
-            # Install the sfdx-git-delta plugin     
-                -   name: Install the sfdx-git-delta plugin
-                    run: |
-                        echo 'y' | sfdx plugins:install sfdx-git-delta
 
             # Generate the package.xml for delta files     
                 -   name: Generate the package.xml for delta files
